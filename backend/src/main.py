@@ -1,20 +1,19 @@
-from click import echo
 import uvicorn
+
+from typing import Annotated
+
 from fastapi import FastAPI, HTTPException, Depends, Response
 
 from authx import AuthX, AuthXConfig
-from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field
-
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import func, select, insert, update, delete
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-# from db.db import HOTELS
-
+from db.db import Base, HotelModel, OwnerModel, UserModel
 # если использовать тесты, писать так:
 # from backend.src.db.db import HOTELS
+
+from schemas.hotels_schemas import *
 
 
 # создание базового шаблонного приложения FastAPI
@@ -45,46 +44,6 @@ async def get_session():
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 
-class Base(DeclarativeBase):
-    pass
-
-# создание полей в БД
-class HotelModel(Base):
-    __tablename__ = "hotels"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str]
-    owner: Mapped[str]
-    description: Mapped[str]
-
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
-
-
-class OwnerModel(Base):
-    __tablename__ = "owners"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str]
-    number: Mapped[str]
-    password: Mapped[str]
-
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
-
-
-class UserModel(Base):
-    __tablename__ = "users"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str]
-    number: Mapped[str]
-    password: Mapped[str]
-
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
-
-
 # создание БД
 @app.post("/setup_db",
           tags=["Отели"],
@@ -97,19 +56,6 @@ async def setup_db():
         await conn.run_sync(Base.metadata.create_all)
     return {"status": True}
 
-
-# то что будет добавляться в post запросе 
-class HotelAddSchema(BaseModel):
-    title: str
-    owner: str
-    description: str | None
-
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
-
-# id добавиться авто, к верхнему классу
-class IDHotelAddSchema(HotelAddSchema):
-    id: int
 
 # добавление отеля
 @app.post("/add_hotels",
@@ -135,15 +81,16 @@ async def get_hotel(session: SessionDep):
     result = await session.execute(query)
     return result.scalars().all()
 
+
 # получить конкретный отель
-# @app.get("/hotels/{hotel_id}", 
-#          tags=["Отели"],
-#          summary="Получить конкретный отель")
-# def get_hotel(hotel_id: int):
-#     for hotel in HOTELS:
-#         if hotel["id"] == hotel_id:
-#             return hotel
-#     raise HTTPException(status_code=404, detail="отель не найден")
+@app.get("/hotels/{hotel_id}", 
+         tags=["Отели"],
+         summary="Получить конкретный отель")
+def get_hotel(hotel_id: int, session: SessionDep):
+    hotel = ...
+    if hotel is not None:
+        return hotel
+    raise HTTPException(status_code=404, detail="отель: {hotel_id} не найден")
 
 
 # для получение отелей из словаря в db.py
@@ -154,20 +101,11 @@ async def get_hotel(session: SessionDep):
 #     return HOTELS
 
 
-# базовый класс пользователя 
-class UserLoginSchema(BaseModel):
-    username: str
-    password: str
-
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
-
-
 # авторизация с токеном
 @app.post("/login",
           tags=["Авторизация"],
           summary="получить JWT токен")
-def login(credentials: UserLoginSchema, response: Response):
+def login(credentials: UserLogin, response: Response):
     if credentials.username == "test" and credentials.password == "test":
         token = security.create_access_token(uid="12345")
         response.set_cookie(config.JWT_ACCESS_COOKIE_NAME, token)
@@ -184,7 +122,7 @@ def protected():
     return {"data": "TOP SECRET"}
 
 
-# изменить существующий отель
+# изменить существующий отель, put заменит все свойства
 @app.put("/put_hotels/{hotel_id}",
           tags=["Отели"],
           summary="Изменить отель")
@@ -193,21 +131,7 @@ async def put_hotel(hotel_id: int, session: SessionDep):
     result = await session.execute(query)
     await session.commit()
     return result.scalars().all(), {"status_put_hotel": True}
-    
 
-# то что будет добавляться в put запросе 
-class HotelDeleteSchema(BaseModel):
-    id: int
-    title: str
-    owner: str
-    description: str | None
-
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
-
-# id добавиться автоматом, к верхнему классу
-# class IDHotelDeleteSchema(HotelDeleteSchema):
-#     id: int
 
 # удалить существующий отель
 # @app.delete("/delete_hotels",
