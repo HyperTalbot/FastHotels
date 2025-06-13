@@ -1,61 +1,55 @@
-from pydantic import ConfigDict
-from sqlalchemy import func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from datetime import datetime
-from typing import Annotated
+# from pydantic import ConfigDict
+# from sqlalchemy import func
+# from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+# from datetime import datetime
+# from typing import Annotated
 
 
-# настройка аннотаций
-created_at = Annotated[datetime, mapped_column(server_default=func.now())]
-updated_at = Annotated[datetime, mapped_column(server_default=func.now(), onupdate=datetime.now)]
+# # настройка аннотаций
+# created_at = Annotated[datetime, mapped_column(server_default=func.now())]
+# updated_at = Annotated[datetime, mapped_column(server_default=func.now(), onupdate=datetime.now)]
 
 
-class Base(DeclarativeBase):
-    pass
-
-# создание полей в БД отелей
-class HotelModel(Base):
-    __tablename__ = "hotels"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str]
-    owner: Mapped[str]
-    description: Mapped[str]
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
-
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
+# class Base(DeclarativeBase):
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     created_at: Mapped[created_at]
+#     updated_at: Mapped[updated_at]
 
 
-# БД владельцев
-class OwnerModel(Base):
-    __tablename__ = "owners"
+# # создание полей в БД отелей
+# class HotelModel(Base):
+#     __tablename__ = "hotels"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str]
-    number: Mapped[str]
-    password: Mapped[str]
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
+#     title: Mapped[str]
+#     owner: Mapped[str]
+#     description: Mapped[str]
 
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
+#     # запрет на доп поля
+#     model_config = ConfigDict(extra="forbid")
 
 
-# БД пользователей
-class UserModel(Base):
-    __tablename__ = "users"
+# # БД владельцев
+# class OwnerModel(Base):
+#     __tablename__ = "owners"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str]
-    number: Mapped[str]
-    password: Mapped[str]
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
+#     username: Mapped[str]
+#     number: Mapped[str]
+#     password: Mapped[str]
 
-    # запрет на доп поля
-    model_config = ConfigDict(extra="forbid")
+#     # запрет на доп поля
+#     model_config = ConfigDict(extra="forbid")
+
+
+# # БД пользователей
+# class UserModel(Base):
+#     __tablename__ = "users"
+
+#     username: Mapped[str]
+#     number: Mapped[str]
+#     password: Mapped[str]
+
+#     # запрет на доп поля
+#     model_config = ConfigDict(extra="forbid")
 
 # HOTELS = [
 #     {
