@@ -19,6 +19,7 @@ const contentStyle: React.CSSProperties = {
 
 const { Header, Sider, Content } = Layout;
 
+// текст в меню
 const items: MenuItem[] = [
   {
     key: '1',
@@ -71,6 +72,7 @@ const items: MenuItem[] = [
   },
 ];
 
+// для меню
 interface LevelKeysProps {
   key?: string;
   children?: LevelKeysProps[];
@@ -94,7 +96,7 @@ const getLevelKeys = (items1: LevelKeysProps[]) => {
 
 const levelKeys = getLevelKeys(items as LevelKeysProps[]);
 
-const App: React.FC = () => {
+const App: React.FC = async () => {
   const [stateOpenKeys, setStateOpenKeys] = useState(['2', '23']);
 
   const onOpenChange: MenuProps['onOpenChange'] = (openKeys) => {
@@ -122,15 +124,45 @@ const App: React.FC = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const fetcHotels = () => {
-    axios.get("http://127.0.0.1:8000/hotels").then(response => {
-      console.log("response", response)
-    })
-  };
+  // const fetcHotels = () => {
+  //   axios.get("http://127.0.0.1:8000/hotels").then(response => {
+  //     console.log("response", response)
+  //   })
+  // };
 
-  useEffect( () => {
-    fetcHotels
-  }, []);
+  // useEffect( () => {
+  //   fetcHotels
+  // }, []);
+
+  // const request = new Request("http://127.0.0.1:8000/api/owners/", {
+  //   method: "GET",
+  //   body: '{"name": "n1"}',
+  // });
+  
+  // const URL = request.url;
+  // const method = request.method;
+  // const credentials = request.credentials;
+  // const bodyUsed = request.bodyUsed;
+
+
+  // fetch(request)
+  // .then((response) => {
+  //   if (response.status === 200) {
+  //     return response.json();
+  //   } else {
+  //     throw new Error("Что-то пошло не так на API сервере.");
+  //   }
+  // })
+  // .then((response) => {
+  //   console.debug(response);
+  //   // ...
+  // })
+  // .catch((error) => {
+  //   console.error(error);
+  // });
+
+  // let data = await fetch('http://127.0.0.1:8000/api/owners/')
+  // let posts = await data.json()
 
   return (
     <>
@@ -156,13 +188,21 @@ const App: React.FC = () => {
       style={{ width: 256 }}
       items={items}
     />
+    <ul>
+      {/* {posts.map((post: { id: React.Key | null | undefined; name: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; description: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; price: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; }) => (
+        <li key={post.id}>{post.name}, {post.description}, {post.price}</li>
+      ))} */}
+    
     <Space direction="vertical" size={16}>
     <Card title="Отели Санкт-Петербурга" extra={<a href="#">More</a>} style={{ width: 300 }}>
+      {/* <p>{posts.name}</p>
+      <p>{posts.price}</p> */}
       <p>Россия</p>
       <p>Гостиницы Питера у метро</p>
       <p>Card content</p>
     </Card>
     </Space>
+    </ul>
     <Content
     style={{
       margin: '24px 16px',

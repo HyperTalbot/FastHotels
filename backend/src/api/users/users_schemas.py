@@ -3,8 +3,12 @@ from pydantic import BaseModel, ConfigDict
 
 class UserBase(BaseModel):
     name: str
-    description: str
-    price: int
+    email: str
+    phone: str
+    password: str
+    is_active: bool
+    is_verified: bool
+    # len_reviews: int
 
 
 class UserCreate(UserBase):
@@ -17,8 +21,12 @@ class UserUpdate(UserCreate):
 
 class UserUpdatePartial(UserCreate):
     name: str | None = None
-    description: str | None = None
-    price: int | None = None
+    email: str | None = None
+    phone: str | None = None
+    password: str | None = None
+    is_active: bool | None = None
+    is_verified: bool | None = None
+    len_reviews: int | None = None
 
 
 class User(UserBase):

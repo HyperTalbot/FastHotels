@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hotels",
+  title: "FastHotels",
 };
 
 export default function RootLayout({
