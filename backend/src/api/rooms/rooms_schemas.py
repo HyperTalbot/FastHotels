@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 
 class RoomBase(BaseModel):
     hotel_id: int
-    photo: bool
+    photos: str
     title: str
     price_for_night: int
     len_beds: int
@@ -23,7 +23,7 @@ class RoomUpdatePartial(RoomCreate):
     price_for_night: int | None = None
     len_beds: int | None = None
     comfort: str | None = None
-    photo: bool | None = None
+    photos: str | None = None
 
 
 class Room(RoomBase):

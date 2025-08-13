@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -6,7 +6,7 @@ from .base import Base
 
 class Room(Base):
     hotel_id = Column(Integer, ForeignKey("hotels.id"))
-    photo = Column(Boolean, default=False)
+    photos = Column(Text)
     title = Column(String(30))
     price_for_night = Column(Integer)
     len_beds = Column(Integer)

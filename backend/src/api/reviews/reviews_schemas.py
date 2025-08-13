@@ -7,7 +7,7 @@ class ReviewBase(BaseModel):
     room_id: int
     rating: float
     text: str
-    photo: bool
+    photo: str
 
 
 class ReviewCreate(ReviewBase):
@@ -21,7 +21,7 @@ class ReviewUpdate(ReviewCreate):
 class ReviewUpdatePartial(ReviewCreate):
     rating: float | None = None
     text: str | None = None
-    photo: bool | None = None
+    photo: str | None = None
 
 
 class Review(ReviewBase):

@@ -1,7 +1,23 @@
-import type { NextConfig } from "next";
+// нужно будет решить с загрузкой фоток
 
-const nextConfig: NextConfig = {
-  /* config options here */
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {
+//   images: {
+//     remotePatterns: [
+//       {
+//         protocol: "http",
+//         hostname: "localhost",
+//         port: "8000",
+//         pathname: "/static/**",
+//       },
+//     ],
+//   },
+// };
+
+const nextConfig = {
+  images: {
+    unoptimized: true,
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

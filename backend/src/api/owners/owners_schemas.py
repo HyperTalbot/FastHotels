@@ -21,8 +21,8 @@ class OwnerUpdatePartial(OwnerCreate):
     name: str | None = None
     email: str | None = None
     phone: str | None = None
-    is_verified: int | None = None
-    password: int | None = None
+    is_verified: bool | None = None
+    password: str | None = None
 
 
 class Owner(OwnerBase):

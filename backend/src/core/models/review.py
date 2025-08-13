@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -10,7 +10,7 @@ class Review(Base):
     room_id = Column(Integer, ForeignKey("rooms.id"))
     rating = Column(Float(10))
     text = Column(String(800))
-    photo = Column(Boolean, default=False)
+    photo = Column(String, default=False)
    
     user = relationship("User", back_populates="reviews", foreign_keys=[user_id])
     hotel = relationship("Hotel", back_populates="reviews", foreign_keys=[hotel_id])

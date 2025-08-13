@@ -26,7 +26,7 @@ class UserUpdatePartial(UserCreate):
     password: str | None = None
     is_active: bool | None = None
     is_verified: bool | None = None
-    len_reviews: int | None = None
+    # len_reviews: int | None = None
 
 
 class User(UserBase):
