@@ -10,6 +10,7 @@ async def get_owners(session: AsyncSession) -> list[Owner]:
     stmt = select(Owner).order_by(Owner.id)
     result: Result = await session.execute(stmt)
     owners = result.scalars().all()
+    await session.close()
     return list(owners)
 
 
@@ -21,7 +22,8 @@ async def create_owner(session: AsyncSession, owner_in: OwnerCreate) -> Owner:
     owner = Owner(**owner_in.model_dump())
     session.add(owner)
     await session.commit()
-    # await session.refresh(owner)
+    await session.refresh(owner)
+    await session.close()
     return owner
 
 
@@ -34,6 +36,7 @@ async def update_owner(
     for name, value in owner_update.model_dump(exclude_unset=partial).items():
         setattr(owner, name, value)
     await session.commit()
+    await session.close()
     return owner
 
 
@@ -43,3 +46,4 @@ async def delete_owner(
 ) -> None:
     await session.delete(owner)
     await session.commit()
+    await session.close()

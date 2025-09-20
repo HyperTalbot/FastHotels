@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -7,7 +7,7 @@ from .base import Base
 class Hotel(Base):
     title = Column(String(30), nullable=False)
     owner_id = Column(Integer, ForeignKey("owners.id"))
-    photos = Column(Text, nullable=True)
+    photos = Column(JSON, nullable=True)
     stars = Column(Integer, nullable=True)
     description = Column(String(800), nullable=False)
     address = Column(String(100), nullable=False)

@@ -10,6 +10,7 @@ async def get_users(session: AsyncSession) -> list[User]:
     stmt = select(User).order_by(User.id)
     result: Result = await session.execute(stmt)
     user = result.scalars().all()
+    await session.close()
     return list(user)
 
 
@@ -21,7 +22,8 @@ async def create_user(session: AsyncSession, user_in: UserCreate) -> User:
     user = User(**user_in.model_dump())
     session.add(user)
     await session.commit()
-    # await session.refresh(user)
+    await session.refresh(user)
+    await session.close()
     return user
 
 
@@ -34,6 +36,7 @@ async def update_user(
     for name, value in user_update.model_dump(exclude_unset=partial).items():
         setattr(user, name, value)
     await session.commit()
+    await session.close()
     return user
 
 
@@ -43,3 +46,4 @@ async def delete_user(
 ) -> None:
     await session.delete(user)
     await session.commit()
+    await session.close()

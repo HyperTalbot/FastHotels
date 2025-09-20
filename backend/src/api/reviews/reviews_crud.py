@@ -10,6 +10,7 @@ async def get_reviews(session: AsyncSession) -> list[Review]:
     stmt = select(Review).order_by(Review.id)
     result: Result = await session.execute(stmt)
     review = result.scalars().all()
+    await session.close()
     return list(review)
 
 
@@ -21,7 +22,8 @@ async def create_review(session: AsyncSession, review_in: ReviewCreate) -> Revie
     review = Review(**review_in.model_dump())
     session.add(review)
     await session.commit()
-    # await session.refresh(review)
+    await session.refresh(review)
+    await session.close()
     return review
 
 
@@ -34,6 +36,7 @@ async def update_review(
     for name, value in review_update.model_dump(exclude_unset=partial).items():
         setattr(review, name, value)
     await session.commit()
+    await session.close()
     return review
 
 
@@ -43,3 +46,4 @@ async def delete_review(
 ) -> None:
     await session.delete(review)
     await session.commit()
+    await session.close()

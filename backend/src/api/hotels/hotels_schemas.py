@@ -65,4 +65,16 @@ class Hotel(HotelBase):
   "rating": 9,
   "min_price_for_night": 12000
 }
+
+{
+  "title": "Hotel 2",
+  "owner_id": 1,
+  "photos": ["/static/hotels/hotel3.jpeg"],
+  "stars": 5,
+  "description": "Комфортабельный отель.",
+  "address": "Prinsengracht 123, Amsterdam",
+  "comfort": "Parking, Breakfast",
+  "rating": 8,
+  "min_price_for_night": 12500
+}
 """

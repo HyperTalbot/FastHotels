@@ -4,6 +4,7 @@ from typing import Optional, List
 from fastapi import APIRouter, HTTPException, status, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.rooms import rooms_crud, rooms_schemas
 from core.models import db_helper
 from . import hotels_crud
 from .hotels_dependencies import hotel_by_id
@@ -44,6 +45,14 @@ async def create_hotel(
 @router.get("/{hotel_id}/", response_model=Hotel)
 async def get_hotel(hotel: Hotel = Depends(hotel_by_id)):
     return hotel
+
+
+@router.get("/{hotel_id}/rooms/", response_model=List[rooms_schemas.Room])
+async def get_hotel_rooms(
+    hotel: Hotel = Depends(hotel_by_id), 
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency)
+):
+    return await rooms_crud.get_rooms_by_hotel(session=session, hotel_id=hotel.id)
 
 
 @router.put("/{hotel_id}/")

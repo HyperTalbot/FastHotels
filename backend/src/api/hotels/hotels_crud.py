@@ -1,19 +1,9 @@
 import json
 from typing import Optional, List
-from datetime import date
-from sqlalchemy import select, and_, or_, desc, asc
-from sqlalchemy.engine import Result
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Hotel
 
-from .hotels_schemas import HotelCreate, HotelUpdate, HotelUpdatePartial
-
-
-# async def get_hotels(session: AsyncSession) -> list[Hotel]:
-#     stmt = select(Hotel).order_by(Hotel.id)
-#     result: Result = await session.execute(stmt)
-#     hotels = result.scalars().all()
-#     return list(hotels)
 
 def parse_photos(hotel: Hotel) -> Hotel:
     if isinstance(hotel.photos, str):
@@ -22,6 +12,7 @@ def parse_photos(hotel: Hotel) -> Hotel:
         except json.JSONDecodeError:
             hotel.photos = []
     return hotel
+
 
 async def get_hotels(
     session: AsyncSession,
@@ -52,7 +43,9 @@ async def get_hotels(
 
     result = await session.execute(stmt)
     hotels = result.scalars().all()
+    await session.close()
     return [parse_photos(h) for h in hotels]
+
 
 async def create_hotel(session: AsyncSession, hotel_data):
     data = hotel_data.model_dump()
@@ -61,6 +54,7 @@ async def create_hotel(session: AsyncSession, hotel_data):
     session.add(hotel)
     await session.commit()
     await session.refresh(hotel)
+    await session.close()
     return parse_photos(hotel)
 
 
@@ -84,9 +78,12 @@ async def update_hotel(
 
     await session.commit()
     await session.refresh(hotel)
+    await session.close()
     return parse_photos(hotel)
 
 
 async def delete_hotel(session: AsyncSession, hotel: Hotel) -> None:
     await session.delete(hotel)
     await session.commit()
+    await session.close()
+

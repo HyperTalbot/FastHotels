@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from core.config import settings
 from core.models import Base, db_helper
-from api import router as router_v1
+from api import router 
 
 
 # асинхронное создание БД
@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(router=router_v1, prefix=settings.api_prefix)
+app.include_router(router=router, prefix=settings.api_prefix)
 
 
 # решение проблемы с CORS (чтобы бэк передавал данные на фронт)

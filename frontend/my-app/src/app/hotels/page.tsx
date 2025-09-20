@@ -12,6 +12,7 @@ import {
   Select,
   Form,
   Button,
+  Carousel,
 } from "antd";
 import api from "@/app/apiClient";
 import Link from "next/link";
@@ -58,7 +59,7 @@ export default function HotelsPage() {
       if (filters.stars.length) params.stars = filters.stars.join(",");
       if (filters.sort) params.sort = filters.sort;
 
-      const response = await api.get("/hotels", { params });
+      const response = await api.get("/hotels/", { params });
       setHotels(response.data);
     } catch (error) {
       console.error("Failed to fetch hotels:", error);
@@ -87,85 +88,112 @@ export default function HotelsPage() {
   }, [filters]);
 
   return (
-    <div style={{ padding: "24px" }}>
-      <Title level={2}>Выбор отеля</Title>
+    <>
+      <div style={{ width: "25%", padding: "24px" }}>
+        <Card hoverable title={<><br></br><Title level={2}>Выбор отеля</Title></>}>
+          {/* <Title level={2}>Выбор отеля</Title> */}
 
-      <Form layout="vertical" onFinish={onFinish} style={{ marginBottom: 24 }}>
-        <Row gutter={16}>
-          <Col span={6}>
-            <Form.Item label="Даты" name="dates">
-              <RangePicker style={{ width: "100%" }} format="DD.MM.YYYY" />
-            </Form.Item>
-          </Col>
+          <Form layout="vertical" onFinish={onFinish} style={{ marginBottom: 24, marginRight: 0 }}>
+            <Row gutter={16}>
+              <Col span="100%">
+                <Form.Item label="Даты" name="dates">
+                  <RangePicker style={{ width: "100%" }} format="DD.MM.YYYY" />
+                </Form.Item>
+              </Col>
+            </Row>
 
-          <Col span={6}>
-            <Form.Item label="Цена за ночь (₽)" name="price" initialValue={filters.price}>
-              <Slider range min={0} max={50000} step={500} tooltip={{ open: true }} />
-            </Form.Item>
-          </Col>
+            <Row gutter={16}>
+              <Col span={20}>
+                <Form.Item label="Цена за ночь (₽)" name="price" initialValue={filters.price}>
+                  <Slider range min={0} max={50000} step={500} tooltip={{ open: true }} />
+                </Form.Item>
+              </Col>
+            </Row>
 
-          <Col span={4}>
-            <Form.Item label="Звёзды" name="stars">
-              <Select mode="multiple" allowClear placeholder="Количество звёзд">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Option key={s} value={s}>{s}★</Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
+            <Row gutter={16}>
+              <Col span={11}>
+                <Form.Item label="Звёзды" name="stars">
+                  <Select mode="multiple" allowClear placeholder="Количество звёзд">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Option key={s} value={s}>{s}★</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
 
-          <Col span={4}>
-            <Form.Item label="Сортировка" name="sort">
-              <Select allowClear placeholder="Сортировать по...">
-                <Option value="price_asc">Цена: по возрастанию</Option>
-                <Option value="price_desc">Цена: по убыванию</Option>
-                <Option value="rating_desc">Рейтинг</Option>
-              </Select>
-            </Form.Item>
-          </Col>
+            <Row gutter={16}>
+              <Col span={11}>
+                <Form.Item label="Сортировка" name="sort">
+                  <Select allowClear placeholder="Сортировать по...">
+                    <Option value="price_asc">Цена: по возрастанию</Option>
+                    <Option value="price_desc">Цена: по убыванию</Option>
+                    <Option value="rating_desc">Рейтинг</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
 
-          <Col span={4} style={{ display: "flex", alignItems: "flex-end" }}>
-            <Button type="primary" htmlType="submit">
-              Применить фильтры
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+            <Row gutter={16}>
+              <Col span={4} style={{ display: "flex", alignItems: "flex-end" }}>
+                <Button type="primary" htmlType="submit">
+                  Применить фильтры
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
+      </div>
 
-      {loading ? (
-        <Spin fullscreen />
-      ) : (
-        <Row gutter={[16, 16]}>
-          {hotels.map((hotel) => (
-            <Col span={8} key={hotel.id}>
-              <Link href={`/hotels/${hotel.id}`} passHref>
-                <Card
-                  hoverable
-                  title={hotel.title}
-                  style={{ height: "100%" }}
-                  cover={
-                    <Image
-                      src={
-                        hotel.photos && hotel.photos.length > 0
-                          ? `${API_URL}${hotel.photos[0]}`
-                          : "/placeholder.jpg"
-                      }
-                      alt={hotel.title}
-                      width={400}
-                      height={250}
-                      style={{ objectFit: "cover" }}
-                    />
-                  }
-                >
-                  <p>{hotel.description.substring(0, 100)}...</p>
-                  <p>Рейтинг: {hotel.rating}</p>
-                  <p>💰 от {hotel.min_price_for_night} ₽ за ночь</p>
-                </Card>
-              </Link>
-            </Col>
-          ))}
-        </Row>
-      )}
-    </div>
+
+      <div style={{ padding: "24px" }}>
+        {loading ? (
+          <Spin fullscreen />
+        ) : (
+          <Row gutter={[16, 16]}>
+            {hotels.map((hotel) => (
+              <Col span={8} key={hotel.id}>
+                {/* url откуда получаем данные из бека об отелях */}
+                <Link href={`/hotels/${hotel.id}/`} passHref>
+                  <Card
+                    hoverable
+                    title={hotel.title}
+                    style={{ height: "100%" }}
+                    cover={
+                      hotel.photos && hotel.photos.length > 0 ? (
+                        <Carousel arrows infinite={false}>
+                          {hotel.photos.map((url, idx) => (
+                            <Image
+                              key={idx}
+                              src={`${API_URL}${url}`}
+                              alt={`${hotel.title} фото ${idx + 1}`}
+                              width={400}
+                              height={300}
+                              style={{ objectFit: "cover" }}
+                            />
+                          ))}
+                        </Carousel>
+                      ) : (
+                        <Image
+                          src="/placeholder.jpg"
+                          alt={hotel.title}
+                          width={400}
+                          height={300}
+                          style={{ objectFit: "cover" }}
+                        />
+                      )
+                    }
+                  >
+                    <p>📜 {hotel.description.substring(0, 100)}...</p>
+                    <p>📊 Рейтинг: {hotel.rating}</p>
+                    <p>💰 от {hotel.min_price_for_night} ₽ за ночь</p>
+                  </Card>
+                </Link>
+              </Col>
+            ))}
+          </Row>
+        )}
+      </div>
+    </>
   );
 }
